@@ -10,6 +10,7 @@ public class BoardPresenter : MonoBehaviour
     [SerializeField] private TMP_InputField rowsCount;
     [SerializeField] private TMP_InputField colsCount;
     [SerializeField] private GameObject errorMessage;
+    [SerializeField] private List<Sprite> frontImages;
 
     private int rows;
     private int cols;
@@ -72,7 +73,15 @@ public class BoardPresenter : MonoBehaviour
 
         for (int i = 0; i < spawnedCards.Count; i++)
         {
-            spawnedCards[i].Init(new CardModel(ids[i]));
+            int id = ids[i];
+
+            if (id >= frontImages.Count)
+            {
+                Debug.LogError("Not enough front sprites for IDs!");
+                return;
+            }
+
+            spawnedCards[i].Init(new CardModel(id), frontImages[id]);
         }
     }
 
@@ -132,6 +141,11 @@ public class BoardPresenter : MonoBehaviour
                 return;
         }
 
-        Debug.Log("Game Complete!");
+        OnGameCompleted();
+    }
+
+    private void OnGameCompleted()
+    {
+        Debug.Log("Game Completed!");
     }
 }

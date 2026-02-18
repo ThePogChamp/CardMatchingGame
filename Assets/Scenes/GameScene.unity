@@ -2458,6 +2458,17 @@ MonoBehaviour:
   rowsCount: {fileID: 805446935}
   colsCount: {fileID: 788674905}
   errorMessage: {fileID: 1423205167}
+  frontImages:
+  - {fileID: 605854830, guid: 7c1dca8632517d643a0045684cc37f14, type: 3}
+  - {fileID: 1010332425, guid: 7c1dca8632517d643a0045684cc37f14, type: 3}
+  - {fileID: 1727442922, guid: 7c1dca8632517d643a0045684cc37f14, type: 3}
+  - {fileID: 1502614640, guid: 7c1dca8632517d643a0045684cc37f14, type: 3}
+  - {fileID: -1127285177, guid: 7c1dca8632517d643a0045684cc37f14, type: 3}
+  - {fileID: 207566672, guid: 7c1dca8632517d643a0045684cc37f14, type: 3}
+  - {fileID: -2059320326, guid: 7c1dca8632517d643a0045684cc37f14, type: 3}
+  - {fileID: -1239492352, guid: 7c1dca8632517d643a0045684cc37f14, type: 3}
+  - {fileID: -887507838, guid: 7c1dca8632517d643a0045684cc37f14, type: 3}
+  - {fileID: -1162685367, guid: 7c1dca8632517d643a0045684cc37f14, type: 3}
 --- !u!1 &1836791598
 GameObject:
   m_ObjectHideFlags: 0
