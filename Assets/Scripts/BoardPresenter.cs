@@ -13,6 +13,14 @@ public class BoardPresenter : MonoBehaviour
     [SerializeField] private List<Sprite> frontImages;
     [SerializeField] private float startRevealDuration = 1f;
 
+    [SerializeField] private int matchScore = 100;
+    [SerializeField] private int comboBonus = 50;
+
+    private int currentScore;
+    private int comboStreak;
+
+    public System.Action<int> OnScoreChanged;
+
     private int rows;
     private int cols;
     
@@ -44,6 +52,10 @@ public class BoardPresenter : MonoBehaviour
 
     private IEnumerator StartGameRoutine()
     {
+        currentScore = 0;
+        comboStreak = 0;
+        OnScoreChanged?.Invoke(currentScore);
+
         isResolving = true;
         boardManager.GenerateBoard(rows, cols);
         yield return null;
@@ -131,6 +143,11 @@ public class BoardPresenter : MonoBehaviour
 
         if (first.Model.Id == second.Model.Id)
         {
+            comboStreak += 1;
+            int gained = matchScore + (comboStreak - 1) * comboBonus;
+            currentScore += gained;
+            OnScoreChanged?.Invoke(currentScore);
+
             first.Model.IsMatched = true;
             second.Model.IsMatched = true;
 
@@ -141,6 +158,7 @@ public class BoardPresenter : MonoBehaviour
         }
         else
         {
+            comboStreak = 0;
             yield return first.FlipToBack();
             yield return second.FlipToBack();
         }
@@ -190,6 +208,6 @@ public class BoardPresenter : MonoBehaviour
 
     private void OnGameCompleted()
     {
-        Debug.Log("Game Completed!");
+        Debug.Log($"Game Completed! Final Score: {currentScore}");
     }
 }
