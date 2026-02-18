@@ -9,10 +9,11 @@ public class CardView : MonoBehaviour
     [SerializeField] private GameObject back;
     [SerializeField] private Button button;
     [SerializeField] private float flipDuration = 0.2f;
-
     public CardModel Model { get; private set; }
     public event Action<CardView> OnClicked;
     private bool isFlipping;
+
+    public bool IsFlipping { get { return isFlipping; } }
 
     public void Init(CardModel model, Sprite sprite)
     {
