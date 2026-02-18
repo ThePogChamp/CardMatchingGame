@@ -76,4 +76,12 @@ public class CardView : MonoBehaviour
         back.SetActive(true);
         transform.localRotation = Quaternion.identity;
     }
+
+    public void SetMatchedVisual()
+    {
+        button.interactable = false;
+        button.GetComponent<Image>().enabled = false;
+        front.SetActive(false);
+        back.SetActive(false);
+    }
 }
