@@ -168,6 +168,8 @@ public class BoardPresenter : MonoBehaviour
             first.SetMatchedVisual();
             second.SetMatchedVisual();
 
+            SoundManager.Instance?.PlayMatch();
+
             SaveGame();
             CheckGameComplete();
         }
@@ -175,6 +177,8 @@ public class BoardPresenter : MonoBehaviour
         {
             comboStreak = 0;
             OnComboChanged?.Invoke(0);
+
+            SoundManager.Instance?.PlayMismatch();
 
             yield return first.FlipToBack();
             yield return second.FlipToBack();
@@ -232,6 +236,7 @@ public class BoardPresenter : MonoBehaviour
         if (isLoading) return;
         Debug.Log($"Game Completed! Final Score: {currentScore}");
         OnGameComplete?.Invoke(currentScore);
+        SoundManager.Instance?.PlayGameOver();
 
         currentScore = 0;
         comboStreak = 0;
