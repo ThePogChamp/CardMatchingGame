@@ -28,7 +28,14 @@ public class BoardPresenter : MonoBehaviour
     private CardView first;
     private CardView second;
     private bool isResolving;
+    private bool isLoading;
 
+    private void Start()
+    {
+        GameSaveData save = SaveSystem.Load();
+        if (save != null)
+            StartCoroutine(LoadGameRoutine(save));
+    }
 
     public void StartGame()
     {
@@ -46,6 +53,7 @@ public class BoardPresenter : MonoBehaviour
             errorMessage.SetActive(false);
         }
 
+        SaveSystem.Clear();
         StopAllCoroutines();
         StartCoroutine(StartGameRoutine());
     }
@@ -74,7 +82,7 @@ public class BoardPresenter : MonoBehaviour
     {
         spawnedCards.Clear();
 
-        foreach (Transform child in boardManager.BoardGrid.GetComponentInChildren<GridLayoutGroup>().transform)
+        foreach (Transform child in boardManager.BoardGrid.transform)
         {
             var view = child.GetComponent<CardView>();
             view.OnClicked -= OnCardClicked;
@@ -154,6 +162,7 @@ public class BoardPresenter : MonoBehaviour
             first.SetMatchedVisual();
             second.SetMatchedVisual();
 
+            SaveGame();
             CheckGameComplete();
         }
         else
@@ -161,6 +170,7 @@ public class BoardPresenter : MonoBehaviour
             comboStreak = 0;
             yield return first.FlipToBack();
             yield return second.FlipToBack();
+            SaveGame();
         }
 
         first = null;
@@ -197,6 +207,8 @@ public class BoardPresenter : MonoBehaviour
 
     private void CheckGameComplete()
     {
+        if (isLoading) return;
+
         foreach (var card in spawnedCards)
         {
             if (!card.Model.IsMatched)
@@ -208,6 +220,74 @@ public class BoardPresenter : MonoBehaviour
 
     private void OnGameCompleted()
     {
+        if (isLoading) return;
         Debug.Log($"Game Completed! Final Score: {currentScore}");
+        SaveSystem.Clear();
+    }
+
+    private void SaveGame()
+    {
+        if (isLoading) return;
+
+        if (spawnedCards == null || spawnedCards.Count == 0)
+            return;
+
+        GameSaveData data = new()
+        {
+            rows = boardManager.Rows,
+            cols = boardManager.Cols,
+            score = currentScore,
+            combo = comboStreak
+        };
+
+        foreach (var card in spawnedCards)
+        {
+            data.matchedCards.Add(card.Model.IsMatched);
+            data.cardIds.Add(card.Model.Id);
+        }
+
+        SaveSystem.Save(data);
+    }
+
+    private IEnumerator LoadGameRoutine(GameSaveData save)
+    {
+        isLoading = true;
+        isResolving = true;
+        boardManager.GenerateBoard(save.rows, save.cols);
+
+        yield return new WaitUntil(() => boardManager.BoardGrid.transform.childCount > 0);
+
+        RebuildSpawnedCards();
+
+        currentScore = save.score;
+        comboStreak = save.combo;
+        OnScoreChanged?.Invoke(currentScore);
+
+        for (int i = 0; i < spawnedCards.Count; i++)
+        {
+            int id = save.cardIds[i];
+            var model = new CardModel(id);
+            spawnedCards[i].Init(model, frontImages[id]);
+
+            if (save.matchedCards[i])
+            {
+                model.IsMatched = true;
+                spawnedCards[i].SetMatchedVisual();
+            }
+        }
+
+        isResolving = false;
+        isLoading = false;
+    }
+
+    private void OnApplicationPause(bool pause)
+    {
+        if (pause)
+            SaveGame();
+    }
+
+    private void OnDestroy()
+    {
+        SaveGame();
     }
 }

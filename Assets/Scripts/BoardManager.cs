@@ -21,6 +21,10 @@ public class BoardManager : MonoBehaviour
 
     public GridLayoutGroup BoardGrid { get { return grid; }}
 
+    public int Rows => currentRows;
+    public int Cols => currentCols;
+
+
     private void OnRectTransformDimensionsChange()
     {
         if (!boardGenerated) return;
@@ -31,6 +35,9 @@ public class BoardManager : MonoBehaviour
 
     public void GenerateBoard(int rows, int cols)
     {
+        if (rows <= 0 || cols <= 0)
+            return;
+            
         currentRows = rows;
         currentCols = cols;
 
