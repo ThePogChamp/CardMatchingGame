@@ -19,7 +19,7 @@ public class UpdateGridInput : MonoBehaviour
 
     public void OnValueChange()
     {
-        if (currentInputField == null)
+        if (currentInputField == null || string.IsNullOrEmpty(currentInputField.text))
             return;
 
         if(isRow)

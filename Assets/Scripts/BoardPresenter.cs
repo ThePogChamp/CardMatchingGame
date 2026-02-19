@@ -20,6 +20,8 @@ public class BoardPresenter : MonoBehaviour
     private int comboStreak;
 
     public System.Action<int> OnScoreChanged;
+    public System.Action<int> OnGameComplete;
+    public System.Action OnGameStarted;
 
     private int rows;
     private int cols;
@@ -60,6 +62,8 @@ public class BoardPresenter : MonoBehaviour
 
     private IEnumerator StartGameRoutine()
     {
+        OnGameStarted?.Invoke();
+
         currentScore = 0;
         comboStreak = 0;
         OnScoreChanged?.Invoke(currentScore);
@@ -222,6 +226,12 @@ public class BoardPresenter : MonoBehaviour
     {
         if (isLoading) return;
         Debug.Log($"Game Completed! Final Score: {currentScore}");
+        OnGameComplete?.Invoke(currentScore);
+
+        currentScore = 0;
+        comboStreak = 0;
+        OnScoreChanged?.Invoke(currentScore);
+
         SaveSystem.Clear();
     }
 
@@ -286,7 +296,7 @@ public class BoardPresenter : MonoBehaviour
             SaveGame();
     }
 
-    private void OnDestroy()
+    private void OnDisable()
     {
         SaveGame();
     }
