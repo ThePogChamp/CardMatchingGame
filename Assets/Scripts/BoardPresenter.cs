@@ -22,6 +22,7 @@ public class BoardPresenter : MonoBehaviour
     public System.Action<int> OnScoreChanged;
     public System.Action<int> OnGameComplete;
     public System.Action OnGameStarted;
+    public System.Action<int> OnComboChanged;
 
     private int rows;
     private int cols;
@@ -159,6 +160,7 @@ public class BoardPresenter : MonoBehaviour
             int gained = matchScore + (comboStreak - 1) * comboBonus;
             currentScore += gained;
             OnScoreChanged?.Invoke(currentScore);
+            OnComboChanged?.Invoke(comboStreak);
 
             first.Model.IsMatched = true;
             second.Model.IsMatched = true;
@@ -172,8 +174,11 @@ public class BoardPresenter : MonoBehaviour
         else
         {
             comboStreak = 0;
+            OnComboChanged?.Invoke(0);
+
             yield return first.FlipToBack();
             yield return second.FlipToBack();
+
             SaveGame();
         }
 
